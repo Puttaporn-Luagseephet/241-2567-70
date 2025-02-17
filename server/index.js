@@ -1,52 +1,71 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mysql = require('mysql2/promise');
 const app = express();
 
 const port = 8000;
+
 app.use(bodyParser.json());
 
 let users = []
-let counter = 1;
+let conn = null;
+const initMysql = async () => {
+    conn = await mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'root',
+        database: 'webdb',
+        port: 8830
+    })
+}/*
+app.get('/testdbnew',async (req, res) => {
 
-/*
-GET /users สำหรับ get users ทั้งหมดที่บันท฿กไว้
-POST /user สำหรับสร้าง users ใหม่บันทึกไว้
-GET /user/:id สำหรับถึง users รายคนออกมา
-PUT /user/:id สำหรับแก้ไข users รายคน(ตาม id ที่บันทึกเข้าไว้)
-DELETE /user/:id สำหรับลบ users รายคน (ตาม id ที่บันทึกเข้าไว้) 
+    try {
+        const results = await conn.query('SELECT * FROM users')
+        res.json(results[0]);
+    } catch (error) {
+        console.log('error: ', error.message);
+        res.status(500).json({error: 'Error fetching users'})
+    }
+});
 */
-
 // path:GET /users ใช้สำหรับแสดงข้อมูล users ทั้งหมดที่บันทึกไว้
-app.get('/users', (req, res) => {    
-    res.json(users);
-});
-// path:POST  /user ใช้สำหรับสร้างข้อมูล user ใหม่บันทึกไว้
-app.post('/user', (req, res) => {  
-    let user = req.body;
-    user.id = counter;
-    counter += 1;
-    users.push(user);
-    res.json({
-        message: 'Create new user successfully' ,
-        user: user
-    });
+app.get('/users', async(req, res) => {    
+    const results = await conn.query('SELECT * FROM users')
+    res.json(results[0]);
 });
 
-//path : PUT /user/:id ใช้สำหรับแก้ไขข้อมูล user โดยใช้ id เป็นตัวระบุ
-app.put('/user/:id', (req, res) => {
+// path:POST  /user ใช้สำหรับสร้างข้อมูล user ใหม่บันทึกไว้
+app.post('/users', async (req, res) => {  
+    let user = req.body;
+    const results = await conn.query('INSERT INTO users SET ?', user)
+    res.json({
+        message: 'Create user successfully',
+        data: results[0]
+    })
+});
+
+// path:GET /users id สำหรับดึง user รายคนออกมา
+app.get('/users/:id', (req, res) => {    
+    let id = req.params.id;
+    //ค้นหา user หรือ indexที่ต้องการดึงข้อมูล
+    let selectedIndex = users.findIndex(user => user.id == id)
+
+    res.json(selectedIndex);
+
+});
+
+//PUT /user/:id สำหรับแก้ไข users รายคน(ตาม id ที่บันทึกเข้าไว้)
+app.put('/users/:id', (req, res) => {
     let id = req.params.id;
     let updateUser = req.body;
-    // ค้นหา user ที่ต้องการแก้ไข
     let selectedIndex = users.findIndex(user => user.id == id)
-    res.send(selectedIndex + '');
-    // แก้ไขข้อมูล users 
-    if (updateUser.firstname) {
-        users[selectedIndex].firstname = updateUser.firstname;
-    }   
-    if (updateUser.lastname) {
-        users[selectedIndex].lastname = updateUser.lastname;
-    }
-
+      
+        users[selectedIndex].firstname = updateUser.firstname || users[selectedIndex].firstname;
+        users[selectedIndex].lastname = updateUser.lastname || users[selectedIndex].lastname;
+        users[selectedIndex].age = updateUser.age || users[selectedIndex].age;
+        users[selectedIndex].gender = updateUser.gender || users[selectedIndex].gender;
+    
     res.json({
         message: 'Update user successfully',    
         data: {
@@ -56,8 +75,8 @@ app.put('/user/:id', (req, res) => {
     })
 });
 
-//path : DELETE /user/:id ใช้สำหรับลบข้อมูล user โดยใช้ id เป็นตัวระบุ
-app.delete('/user/:id', (req, res) => {
+//DELETE /user/:id สำหรับลบ users รายคน (ตาม id ที่บันทึกเข้าไว้)
+app.delete('/users/:id', (req, res) => {
     let id = req.params.id;
     //หา index ของ user ที่ต้องการลบ
     let selectedIndex = users.findIndex(user => user.id == id)
@@ -68,8 +87,9 @@ app.delete('/user/:id', (req, res) => {
         message: 'Delete user successfully',
         indexDelete: selectedIndex
     })  
-})
+});
 
-app.listen(port, (req, res) => {
+app.listen(port, async (req, res) => {
+  await initMysql()
   console.log('Http Server is running on port ' + port); 
 });
