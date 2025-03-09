@@ -10,7 +10,7 @@ body {
     max-width: 640px;
     margin-left: auto;
     margin-right: auto;
-    background-color: rgb(189, 189, 189);
+    background-color: rgb(254, 237, 216);
     padding: 20px;
     box-sizing: border-box;
 }
@@ -40,6 +40,21 @@ textarea {
     border: 0;
     width: 50%;
     height: 40px;
+    background-color:rgb(234, 177, 97);
+}
+.message {
+    margin-button: 20px;
+    padding: 10px;
+    background-color:lightgreen;
+    display: none;
+}
+.message.success {
+    background-color: lightgreen;
+    display: block;
+}
+.message.danger {
+    background-color: lightcoral;
+    display: block;
 }
 @media screen and (max-width: 768px) {
     .flex {
