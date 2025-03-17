@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
 </head>
 <body>
-    <a href="user.html"> Go to User management</a>
+    <a href="user.html"> ➡️ Go to User management</a>
     <div class="container">
         <div class="header">
-            Register form
+            Register Form
         </div>
         <div class="flex form-input">
             <div class="header-form">ชื่อ</div>
@@ -28,15 +30,19 @@
         <div class="form-input">
             <div class="header-form">เพศ</div>
             <div>
-                <input name="gender" type="radio" value="ชาย"> ชาย
+                <input id="male" name="gender" type="radio" value="ชาย">
+                <label for="male">ชาย</label>
             </div>
             <div>
-                <input name="gender" type="radio" value="หญิง"> หญิง
+                <input id="female" name="gender" type="radio" value="หญิง">
+                <label for="female">หญิง</label>
             </div>
             <div>
-                <input name="gender" type="radio" value="อื่นๆ"> อื่นๆ
+                <input id="other" name="gender" type="radio" value="ไม่ระบุ">
+                <label for="other">ไม่ระบุ</label>
             </div>
         </div>
+        
         <div class="form-input">
             <div class="form">งานอดิเรก</div>
             <div>
@@ -58,6 +64,7 @@
 
         <div class="center">
             <button onclick="submitData()" class="button">ส่งข้อมูล</button>
+
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>

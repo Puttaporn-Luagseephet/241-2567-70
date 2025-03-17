@@ -29,19 +29,17 @@ window.onload = async () => {
             let genderDOMs = document.querySelectorAll('input[name=gender]');
             let interestDOMs = document.querySelectorAll('input[name=interest]');
 
-            // เช็คค่าเพศ
-            genderDOMs.forEach(gender => {
-                if (gender.value === user.gender) {
-                    gender.checked = true;
+            for (let i = 0; i < genderDOMs.length; i++) {
+                if (genderDOMs[i].value == user.gender) {
+                    genderDOMs[i].checked = true;
                 }
-            });
+            }
 
-            // เช็คค่าความสนใจ
-            interestDOMs.forEach(interest => {
-                if (user.interests.includes(interest.value)) {
-                    interest.checked = true;
+            for (let i = 0; i < interestDOMs.length; i++) {
+                if (user.interests.includes(interestDOMs[i].value)) {
+                    interestDOMs[i].checked = true;
                 }
-            });
+            }
 
         } catch (error) {   
             console.log('error', error);
@@ -64,7 +62,7 @@ const validateData = (userData) => {
     if (!userData.gender) {
         errors.push('กรุณาเลือกเพศ');
     }
-    if (!userData.interests || userData.interests.length === 0) {
+    if (!userData.interests) {
         errors.push('กรุณาเลือกความสนใจ');
     }
     if (!userData.description) {
@@ -90,9 +88,10 @@ const submitData = async () => {
         genderDOMs.forEach(gender => {
             if (gender.checked) {
                 selectedGender = gender.value;
-            }
+         }
         });
-
+ 
+ 
         // เก็บค่าความสนใจที่ถูกเลือก
         let interests = [];
         interestDOMs.forEach(interest => {
@@ -112,13 +111,13 @@ const submitData = async () => {
 
         console.log('submitData', userData);
 
-        let message = 'บันทึกข้อมูลเรียบร้อย';
+        let message = '✅บันทึกข้อมูลเรียบร้อย';
         if (mode === 'CREATE') {
             const response = await axios.post(`${BASE_URL}/users`, userData);
             console.log('response', response.data);
         } else {
             const response = await axios.put(`${BASE_URL}/users/${selectedId}`, userData);
-            message = 'แก้ไขข้อมูลเรียบร้อย';
+            message = '☑️แก้ไขข้อมูลเรียบร้อย';
             console.log('response', response.data);
         }
 
